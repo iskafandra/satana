@@ -57,6 +57,7 @@ height: 100%;
 display: flex;
 flex-direction: column;
 background-color: var(--bg-paper);
+animation: fadeIn 0.5s ease-in;
 }
 
 /* --- HEADER (Con Nuevo Color) --- */
@@ -225,12 +226,11 @@ cursor: pointer;
 background: transparent;
 filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
 display: block;
-transition: transform 0.1s, box-shadow 0.1s;
+transition: transform 0.1s;
 }
 
-.charm-source:hover {
-transform: scale(1.05);
-box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+.charm-source:active {
+transform: scale(0.95);
 }
 
 /* --- ESLABÓN (UI) --- */
@@ -244,12 +244,18 @@ cursor: pointer;
 filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.2));
 user-select: none;
 touch-action: none;
-transition: transform 0.2s ease, opacity 0.2s ease;
+animation: slideIn 0.3s ease-out;
 }
 
-.charm-wrapper:hover {
-transform: scale(1.05);
-z-index: 10;
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sortable-ghost {
@@ -279,7 +285,6 @@ z-index: 2;
 background-size: 100% 100%;
 background-repeat: no-repeat;
 pointer-events: none;
-transition: opacity 0.3s ease;
 }
 
 /* --- FOOTER (Con Nuevo Color) --- */
@@ -304,7 +309,6 @@ font-weight: bold;
 font-size: 0.72rem;
 text-transform: uppercase;
 box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-transition: all 0.2s ease;
 }
 
 .btn-clear {
@@ -326,8 +330,53 @@ color: #999;
 font-style: italic;
 pointer-events: none;
 font-size: 0.9rem;
-opacity: 0.7;
-transition: opacity 0.3s ease;
+}
+
+/* --- Loading Overlay --- */
+.loading-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(255, 248, 240, 0.9);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+opacity: 1;
+visibility: visible;
+transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-spinner {
+width: 50px;
+height: 50px;
+border: 5px solid #f3f3f3;
+border-top: 5px solid var(--primary-orange);
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin-bottom: 20px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+font-family: 'Playfair Display', serif;
+color: var(--primary-orange);
+font-size: 1.2rem;
+text-align: center;
+}
+
+/* --- Hidden class for loading state --- */
+.loading-hidden {
+opacity: 0;
+visibility: hidden;
+pointer-events: none;
 }
 
 .modal-overlay {
@@ -342,7 +391,6 @@ z-index:1000;
 align-items:center;
 justify-content:center;
 backdrop-filter:blur(3px);
-transition: opacity 0.3s ease;
 }
 
 .modal-content {
@@ -354,13 +402,6 @@ border-radius:12px;
 border:2px solid var(--primary-orange);
 text-align:center;
 position:relative;
-box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-transform: scale(0.9);
-transition: transform 0.3s ease;
-}
-
-.modal-overlay.show .modal-content {
-transform: scale(1);
 }
 
 .modal-close {
@@ -371,110 +412,16 @@ border:none;
 background:none;
 font-size:1.5rem;
 cursor:pointer;
-color: #666;
-transition: color 0.2s ease;
-}
-
-.modal-close:hover {
-color: var(--primary-orange);
-}
-
-/* --- Animaciones de carga --- */
-.loading-spinner {
-display: inline-block;
-width: 20px;
-height: 20px;
-border: 3px solid rgba(215, 49, 1, 0.3);
-border-radius: 50%;
-border-top-color: var(--primary-orange);
-animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-to { transform: rotate(360deg); }
-}
-
-/* --- Mejoras responsive --- */
-@media (max-width: 768px) {
-.header {
-height: 60px;
-padding: 0 10px;
-}
-.price-display {
-font-size: 0.9rem;
-padding: 4px 12px;
-}
-.btn-action {
-padding: 8px 14px;
-font-size: 0.65rem;
-min-width: 90px;
-}
-.btn-clear {
-padding: 8px 12px;
-font-size: 0.65rem;
-}
-.workspace-section {
-flex-basis: 30%;
-min-height: 140px;
-}
-.catalog-grid {
-grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-gap: 8px;
-}
-.charm-source {
-min-height: 40px;
-}
-.charm-wrapper {
-width: var(--frame-w);
-height: var(--frame-h);
-}
-}
-
-@media (max-width: 480px) {
-.header {
-flex-direction: column;
-height: auto;
-padding: 10px;
-gap: 10px;
-}
-.price-display {
-margin: 0;
-}
-.btn-action {
-min-width: 80px;
-font-size: 0.6rem;
-padding: 6px 10px;
-}
-.btn-clear {
-font-size: 0.6rem;
-padding: 6px 10px;
-}
-.workspace-section {
-flex-basis: 25%;
-min-height: 120px;
-}
-}
-
-/* --- Mejoras de interacción --- */
-.charm-wrapper.dragging {
-opacity: 0.7;
-transform: scale(1.05);
-box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-z-index: 20;
-}
-
-.charm-wrapper.delete-hover {
-animation: delete-pulse 0.5s ease-in-out;
-}
-
-@keyframes delete-pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.1); }
-100% { transform: scale(1); }
 }
 </style>
 </head>
 <body>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando aplicación...</div>
+</div>
 
 <div id="info-modal" class="modal-overlay">
 <div class="modal-content">
@@ -512,7 +459,6 @@ animation: delete-pulse 0.5s ease-in-out;
 <section class="workspace-section" id="scroll-container">
 <div id="bracelet-zone">
 <div class="empty-msg" id="empty-text">Pulsera vacía</div>
-</div>
 </section>
 
 <section class="catalog-section">
@@ -537,9 +483,12 @@ return CONFIG.emptycharmPrice || CONFIG.charmPrice || 0;
 
 let zone, catalogContainer, totalPriceDisplay;
 
+// Mostrar loading overlay al inicio
 document.addEventListener('DOMContentLoaded', () => {
-if (typeof CONFIG === 'undefined') return;
-initApp();
+  if (typeof CONFIG === 'undefined') return;
+  
+  // Iniciar carga inmediatamente
+  initApp();
 });
 
 function initApp() {
@@ -591,6 +540,17 @@ if(btnShare) btnShare.style.display = 'block';
 
 initCatalog();
 updateTotal();
+
+// Ocultar loading overlay después de inicializar
+setTimeout(() => {
+const loadingOverlay = document.getElementById('loading-overlay');
+if (loadingOverlay) {
+loadingOverlay.classList.add('loading-hidden');
+setTimeout(() => {
+loadingOverlay.style.display = 'none';
+}, 300);
+}
+}, 800);
 }
 
 function initCatalog() {
@@ -616,7 +576,6 @@ if(emptyText) emptyText.style.display = 'none';
 
 const wrapper = document.createElement('div');
 wrapper.className = 'charm-wrapper';
-wrapper.draggable = true;
 
 const thisPrice = isSpecialType ? getEmptyPrice() : CONFIG.charmPrice;
 wrapper.dataset.price = thisPrice;
@@ -630,9 +589,7 @@ if (isSpecialType && safeFrames.FIRST) frameUrl = safeFrames.FIRST;
 wrapper.innerHTML = `<img src="${charmObj.src}" class="charm-img-layer"><div class="frame-layer" style="background-image: url('${frameUrl}')"></div>`;
 
 wrapper.onclick = function() {
-if(confirm("¿Eliminar?")) {
-this.classList.add('delete-hover');
-setTimeout(() => {
+if(confirm("¿Eliminar este adorno?")) {
 this.style.opacity = '0';
 this.style.transform = 'scale(0.8)';
 setTimeout(() => {
@@ -640,7 +597,6 @@ this.remove();
 updateTotal();
 checkEmpty();
 }, 150);
-}, 300);
 }
 };
 
@@ -679,7 +635,7 @@ totalPriceDisplay.innerText = `${CONFIG.currency}${total.toLocaleString()}`;
 async function generateCanvas() {
 const wrappers = zone.querySelectorAll('.charm-wrapper');
 if(wrappers.length === 0) {
-alert("Vacia");
+alert("Agrega adornos a tu pulsera primero");
 return null;
 }
 const canvas = document.createElement('canvas');
@@ -687,7 +643,7 @@ const ctx = canvas.getContext('2d');
 const itemW = CONFIG.render.frameWidth;
 const itemH = CONFIG.render.frameHeight;
 const overlap = itemW * 0.025;
-const totalW = (wrappers.length * (itemW - overlap)) + overlap;
+const totalW = (wrappers.length * itemW) - (wrappers.length - 1) * overlap;
 canvas.width = Math.max(800, totalW + 100);
 canvas.height = itemH + 300;
 
@@ -740,15 +696,28 @@ return canvas;
 
 // Helpers & Listeners
 function loadImage(src) {
-return new Promise(res => {
-if(!src) res(null);
+return new Promise((res, rej) => {
+if(!src) {
+console.warn("Intentando cargar imagen vacía");
+res(null);
+return;
+}
+
 const i = new Image();
 i.crossOrigin="anonymous";
-i.onload=()=>res(i);
-i.onerror=()=>res(null);
-i.src=src;
+i.onload = () => {
+console.log("Imagen cargada exitosamente:", src);
+res(i);
+};
+i.onerror = (error) => {
+console.warn("Error cargando imagen:", src, error);
+// Devolver null en lugar de rechazar para evitar errores
+res(null);
+};
+i.src = src;
 });
 }
+
 function drawImageProp(ctx, img, x, y, w, h) {
 const r = Math.min(w / img.width, h / img.height);
 ctx.drawImage(img, x + (w - img.width * r)/2, y + (h - img.height * r)/2, img.width * r, img.height * r);
@@ -756,13 +725,11 @@ ctx.drawImage(img, x + (w - img.width * r)/2, y + (h - img.height * r)/2, img.wi
 
 window.toggleModal = () => {
 const m = document.getElementById('info-modal');
-if(m) {
-m.classList.toggle('show');
-}
+if(m) m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
 };
 
 document.getElementById('btn-clear').onclick = () => {
-if(confirm("¿Borrar?")) {
+if(confirm("¿Limpiar toda la pulsera?")) {
 zone.innerHTML = '<div class="empty-msg" id="empty-text">Pulsera vacía</div>';
 updateTotal();
 }
@@ -770,7 +737,7 @@ updateTotal();
 
 document.getElementById('btn-save').onclick = async function() {
 const btn = this;
-const old = btn.innerText;
+const oldText = btn.innerText;
 btn.innerHTML = '<span class="loading-spinner"></span> Generando...';
 btn.disabled = true;
 
@@ -784,12 +751,14 @@ link.click();
 }
 } catch(e) {
 console.error(e);
-}
-
-btn.innerHTML = old;
+alert("Error al generar la imagen. Por favor, inténtalo de nuevo.");
+} finally {
+btn.innerHTML = oldText;
 btn.disabled = false;
+}
 };
 
+// Corrección del botón Compartir
 const btnShare = document.getElementById('btn-share');
 if(btnShare) {
 btnShare.onclick = async function() {
@@ -803,32 +772,36 @@ if(canvas) {
 canvas.toBlob(async (blob) => {
 const file = new File([blob], "diseño_pulsera.jpg", { type: "image/jpeg" });
 if (navigator.canShare && navigator.canShare({ files: [file] })) {
-await navigator.share({ files: [file], title: CONFIG.brandName || 'Mi Diseño', text: '¡Mira la pulsera que diseñé!' });
+await navigator.share({ 
+files: [file], 
+title: CONFIG.brandName || 'Mi Diseño', 
+text: '¡Mira la pulsera que diseñé!' 
+});
 } else {
-alert("Tu dispositivo no soporta compartir imágenes directas. Usa Descargar.");
+alert("Tu dispositivo no soporta compartir directamente. Usa Descargar para guardar el diseño.");
+const link = document.createElement('a');
+link.download = `Diseño_${Date.now()}.jpg`;
+link.href = canvas.toDataURL('image/jpeg', 0.9);
+link.click();
 }
-btn.innerText = oldText;
-btn.disabled = false;
 }, 'image/jpeg');
 }
 } catch(err) {
 console.error("Error share:", err);
+alert("Error al compartir. Por favor, inténtalo de nuevo o usa Descargar.");
 btn.innerText = oldText;
 btn.disabled = false;
 }
 };
 }
 
-// Añadir efecto de drag para mejorar UX
-document.addEventListener('dragstart', function(e) {
-if (e.target.classList.contains('charm-wrapper')) {
-e.target.classList.add('dragging');
-}
-});
-
-document.addEventListener('dragend', function(e) {
-if (e.target.classList.contains('charm-wrapper')) {
-e.target.classList.remove('dragging');
+// Añadir clase para responsive en móvil
+document.addEventListener('DOMContentLoaded', function() {
+// Ajustar el texto del subtitle en móviles
+const subtitle = document.querySelector('.subtitle');
+if (window.innerWidth <= 480) {
+subtitle.style.whiteSpace = 'normal';
+subtitle.style.textAlign = 'center';
 }
 });
 </script>
